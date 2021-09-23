@@ -24,18 +24,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     );
     const data = await response.json();
     const coordinates = data.data; // An array containing hundreds of arrays, each in a ['1947-01-01', 243.1] format.
-    log(coordinates);
     const canvasHeight = document.querySelector(".canvas").clientHeight;
     const canvasWidth = document.querySelector(".canvas").clientWidth;
-    const padding = 20;
+    const canvasPadding = 20;
     const xScale = d3
       .scaleLinear()
       .domain([
-        d3.min(coordinates, data => data[0].split("-")[0]),
-        d3.max(coordinates, data => data[0].split("-")[0]),
+        d3.min(coordinates, data => {
+          if (data[0] === undefined) log("undefined data at xScale.domain()");
+          data[0].split("-")[0]
+        }),
+        d3.max(coordinates, data => {
+          data[0].split("-")[0]}),
       ])
       // Why do I need to subtract 10 from the canvasWidth to show the full data? 
-      .range([0, canvasWidth - 10]);
+      .range([canvasPadding, canvasWidth - canvasPadding]);
 
     const yScale = d3
       .scaleLinear()
@@ -43,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         d3.min(coordinates, data => data[1]),
         d3.max(coordinates, data => data[1]),
       ])
-      .range([padding, canvasHeight - padding]);
+      .range([canvasPadding, canvasHeight - canvasPadding]);
 
     const svg = d3.select("svg").style("background", "pink");
     svg
@@ -55,6 +58,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Need to scale the year of the data point, plus .0, .25, .5, or .75, depending on the quarter.
         "x",
         data => {
+          if (data[0] === undefined) {log("undefined data at svg.attr()")};
           const month = data[0].split("-")[1];
           const decimal =
             month === "01"
@@ -64,7 +68,8 @@ document.addEventListener("DOMContentLoaded", async function () {
               : month === "07"
               ? 0.5
               : 0.75;
-          return xScale(parseInt(data[0].split("-")[0]) + decimal);
+              if (typeof parseInt(data[0].split("-")[0]) + decimal !== "number") {log(typeof (parseInt(data[0].split("-")[0]) + decimal));}
+                return xScale(parseInt(data[0].split("-")[0]) + decimal);
         }
       )
       .attr("y", data => canvasHeight - yScale(data[1]))
@@ -73,7 +78,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       .attr("class", "bar")
       .append("title")
       .text(
-        data => `$${data[1]}B,
+        data => {
+          if (data[0] === undefined) log("undefined at svg.text()");
+          return `$${data[1]}B,
       ${data[0].split("-")[0]} ${
           data[0].split("-")[1] === "01"
             ? "Q1"
@@ -82,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             : data[0].split("-")[1] === "07"
             ? "Q3"
             : "Q4"
-        }`
+        }`}
       );
     svg
       .selectAll("text")
@@ -95,10 +102,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       .style("font-size", 10);
 
     const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisBottom(yScale);
+    const yAxis = d3.axisLeft(yScale);
 
-    // svg.append("g")
-    //   .attr("transform", `translate`)
+    svg.append("g")
+        .attr("transform", `translate(0, ${canvasHeight - canvasPadding})`)
+        .call(xAxis);
+    svg.append("g")
+        .attr("transform", `translate(${canvasPadding}, 0)`)
+        .call(yAxis)
   } catch (err) {
     error(err);
   }

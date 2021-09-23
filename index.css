@@ -13,19 +13,7 @@ body {
   align-items: center;
 }
 
-.container {
-  border: 1px solid black;
-  width: 80%;
-  height: 80%;
-  /* display: grid;
-  grid-template: 1fr 20fr 1fr / 1fr 10fr 1fr; */
-  /* grid-template-columns: 1fr 6fr 1fr;
-  grid-template-rows: 1fr 6fr 1fr; */
-}
-
 svg {
-  /* grid-column: 2 / 3;
-  grid-row: 2 / 3; */
   width: 85%;
   height: 85%;
 }
