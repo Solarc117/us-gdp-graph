@@ -4,4 +4,17 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "javascript.suggest.autoImports": true,
   "js/ts.implicitProjectConfig.checkJs": true,
+  "debug.allowBreakpointsEverywhere": true,
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "pwa-chrome",
+        "request": "launch",
+        "name": "Launch Chrome Debugger",
+        "url": "http://localhost:5500",
+        "webRoot": "${workspaceFolder}",
+      }
+    ]
+  }
 }

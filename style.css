@@ -13,14 +13,15 @@ body {
   align-items: center;
 }
 
-svg {
+.canvas {
   width: 85%;
   height: 85%;
+  border: 1px solid black;
 }
 
 rect {
-  fill: navy;
+  fill: hsl(240, 90%, 55%);
 }
 rect:hover {
-  fill: aliceblue;
+  fill: rgb(189, 192, 15);
 }

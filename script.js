@@ -17,38 +17,53 @@ import * as d3 from "https://cdn.skypack.dev/d3@7";
   4. Within the canvas, render a point for every data point received.
 */
 
+/**
+ * Asynchronously fetches data from the provided url.
+ * @param {string} url The url to fetch data from.
+ * @returns {Promise} The resolved promise.
+ */
+async function fetchData(url) {
+  const response = await fetch(url);
+  return response.json();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   try {
-    const response = await fetch(
+    const USGDP = await fetchData(
       "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json"
     );
-    const data = await response.json();
-    const coordinates = data.data; // An array containing hundreds of arrays, each in a ['1947-01-01', 243.1] format.
+    const coordinates = USGDP.data; // An array containing hundreds of arrays, each in a ['1947-01-01', 243.1] format.
     const canvasHeight = document.querySelector(".canvas").clientHeight;
     const canvasWidth = document.querySelector(".canvas").clientWidth;
-    const canvasPadding = 20;
+    const canvasPadding = 50;
+    // The scale for the time.
     const xScale = d3
       .scaleLinear()
       .domain([
+        // parseFloat since the first items of the arrays are strings.
+        // parseFloat(month) - 1 / 12 yields the decimal of the year based off of the month string.
         d3.min(coordinates, data => {
-          if (data[0] === undefined) log("undefined data at xScale.domain()");
-          data[0].split("-")[0]
+          const [year, month] = data[0].split("-");
+          return parseFloat(year) + (parseFloat(month) - 1) / 12;
         }),
         d3.max(coordinates, data => {
-          data[0].split("-")[0]}),
+          const [year, month] = data[0].split("-");
+          return parseFloat(year) + (parseFloat(month) - 1) / 12;
+        }),
       ])
-      // Why do I need to subtract 10 from the canvasWidth to show the full data? 
       .range([canvasPadding, canvasWidth - canvasPadding]);
+    // The scale for the GDP.
 
     const yScale = d3
       .scaleLinear()
       .domain([
+        // No parseInt required for the second value in the array.
         d3.min(coordinates, data => data[1]),
         d3.max(coordinates, data => data[1]),
       ])
       .range([canvasPadding, canvasHeight - canvasPadding]);
 
-    const svg = d3.select("svg").style("background", "pink");
+    const svg = d3.select("svg");
     svg
       .selectAll("rect")
       .data(coordinates)
@@ -58,29 +73,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Need to scale the year of the data point, plus .0, .25, .5, or .75, depending on the quarter.
         "x",
         data => {
-          if (data[0] === undefined) {log("undefined data at svg.attr()")};
-          const month = data[0].split("-")[1];
-          const decimal =
-            month === "01"
-              ? 0
-              : month === "04"
-              ? 0.25
-              : month === "07"
-              ? 0.5
-              : 0.75;
-              if (typeof parseInt(data[0].split("-")[0]) + decimal !== "number") {log(typeof (parseInt(data[0].split("-")[0]) + decimal));}
-                return xScale(parseInt(data[0].split("-")[0]) + decimal);
+          const [year, month] = data[0].split("-");
+          return xScale(parseFloat(year) + (parseFloat(month) - 1) / 12);
         }
       )
-      .attr("y", data => canvasHeight - yScale(data[1]))
-      .attr("width", 5)
+      .attr("y", data => canvasHeight - yScale(data[1]) - canvasPadding)
+      // Exclude padding on both sides, and divide by 275 - so every rectangle shares an equal portion of the available space.
+      .attr("width", (canvasWidth - 2 * canvasPadding) / 275)
       .attr("height", data => yScale(data[1]))
       .attr("class", "bar")
       .append("title")
-      .text(
-        data => {
-          if (data[0] === undefined) log("undefined at svg.text()");
-          return `$${data[1]}B,
+      .text(data => {
+        return `$${data[1]}B,
       ${data[0].split("-")[0]} ${
           data[0].split("-")[1] === "01"
             ? "Q1"
@@ -89,27 +93,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             : data[0].split("-")[1] === "07"
             ? "Q3"
             : "Q4"
-        }`}
-      );
-    svg
-      .selectAll("text")
-      .data(coordinates)
-      .enter()
-      .append("text")
-      .attr("x", xScale(data[0].split("-")[0]) + 5)
-      .attr("y", data => canvasHeight - data[1] / 48 - 3)
-      .text(data => data[1])
-      .style("font-size", 10);
+        }`;
+      });
 
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
-    svg.append("g")
-        .attr("transform", `translate(0, ${canvasHeight - canvasPadding})`)
-        .call(xAxis);
-    svg.append("g")
-        .attr("transform", `translate(${canvasPadding}, 0)`)
-        .call(yAxis)
+    svg
+      .append("g")
+      .attr("transform", `translate(0, ${canvasHeight - canvasPadding})`)
+      .call(xAxis);
+    svg
+      .append("g")
+      .attr("transform", `translate(${canvasPadding}, 0)`)
+      .call(yAxis);
   } catch (err) {
     error(err);
   }
