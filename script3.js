@@ -25,39 +25,33 @@ function render(yearAgeCollection) {
   const innerWidth = width - 2 * padding;
   const innerHeight = height - 2 * padding;
   const numBars = yearAgeCollection.length;
-  const barWidth = width / numBars; // The width of the svg canvas, divided evenly between the number of bars we'll render.
+  const barWidth = innerWidth / numBars; // The width of the svg canvas, divided evenly between the number of bars we'll render.
   const xScale = d3
     .scaleLinear()
-    .domain([
-      d3.min(yearAgeCollection, pair => pair[0]),
-      d3.max(yearAgeCollection, pair => pair[0]),
-    ])
+    .domain([2002, 2004])
     .range([padding, padding + innerWidth]);
   const yScale = d3
     .scaleLinear()
-    .domain([
-      d3.min(yearAgeCollection, pair => pair[1]),
-      d3.max(yearAgeCollection, pair => pair[1]),
-    ])
-    .range([innerHeight + padding, padding]);
+    .domain([0, 5])
+    .range([innerHeight / 3, innerHeight]);
   // You need to select the svg container with d3 in order to append other d3 methods.
   d3.select("svg")
     .selectAll("rect")
     .data(yearAgeCollection)
     .enter()
     .append("rect")
-    .attr("x", pair => xScale(pair[0]))
-    .attr("y", pair => height - padding - yScale(pair[1]))
-    .attr("width", 50)
-    .attr("height", 50);
+    .attr("x", (pair, i) => i * barWidth + padding)
+    .attr("y", pair => innerHeight + padding - yScale(pair[1]))
+    .attr("width", barWidth)
+    .attr("height", pair => yScale(pair[1]));
 }
 
 async function load() {
   try {
     const yearAge = [
-      [2002, 0],
       [2003, 1],
       [2004, 2],
+      [2005, 3],
     ];
     render(yearAge);
   } catch (err) {
@@ -65,4 +59,6 @@ async function load() {
   }
 }
 
-window.onload = load;
+load();
+
+window.onresize = load;
