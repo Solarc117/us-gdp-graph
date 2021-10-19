@@ -14,7 +14,7 @@ function timeToDecimal(yearMonthDay) {
   const [year, month] = yearMonthDay.split('-').map(item => +item);
   const decimal = (month - 1) / 12;
 
-  return year + decimal;
+  log(year + decimal);
 }
 
 timeToDecimal('2002-01-01');

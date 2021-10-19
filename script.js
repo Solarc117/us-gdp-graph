@@ -18,40 +18,46 @@ function timeToDecimal(yearMonthDay) {
 
 d3.json(
   'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json'
-).then(data => {
-  const width = document.querySelector('.canvas').clientWidth,
-    height = document.querySelector('.canvas').clientHeight,
-    padding = 50,
-    innerWidth = width - 2 * padding,
-    innerHeight = height - 2 * padding;
+)
+  .then(data => {
+    const width = document.querySelector('.canvas').clientWidth,
+      height = document.querySelector('.canvas').clientHeight,
+      padding = 50,
+      innerWidth = width - 2 * padding,
+      innerHeight = height - 2 * padding;
 
-  const svg = d3.select('svg');
+    const svg = d3.select('svg');
 
-  const dateGDPList = data.data;
+    const dateGDPList = data.data;
 
-  const timeScale = d3
-      .scaleLinear()
-      .domain([
-        d3.min(dateGDPList, item => timeToDecimal(item[0])),
-        d3.max(dateGDPList, item => timeToDecimal(item[0])),
-      ])
-      .range([padding, padding + innerWidth]),
-    GDPScale = d3
-      .scaleLinear()
-      .domain([0, d3.max((data = data[1]))])
-      .range([padding + innerHeight, padding]),
-    GDPAxisScale = d3
-      .scaleLinear()
-      .domain([0, d3.max((data = data[1]))])
-      .range([padding, padding + innerHeight]);
+    const timeScale = d3
+        .scaleLinear()
+        .domain([
+          d3.min(dateGDPList, item => timeToDecimal(item[0])),
+          d3.max(dateGDPList, item => timeToDecimal(item[0])),
+        ])
+        .range([padding, padding + innerWidth]),
+      GDPScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(dateGDPList, data => data[1])])
+        .range([padding + innerHeight, padding]);
+      // GDPAxisScale = d3
+      //   .scaleLinear()
+      //   .domain([0, d3.max(dateGDPList, data => data[1])])
+      //   .range([padding, padding + innerHeight]);
 
-  svg
-    .selectAll('rect')
-    .data(dateGDPList)
-    .enter()
-    .append('rect')
-    .attr('x', item => timeScale(item[0]))
-    .attr('y', item => padding + innerHeight - GDPScale(item[1]))
-    .attr('width', 50)
-    .attr('height', 50);
-});
+    // I'm going to try and render the AXES first, and THEN the rectangles.
+
+
+
+    // svg
+    //   .selectAll('rect')
+    //   .data(dateGDPList)
+    //   .enter()
+    //   .append('rect')
+    //   .attr('x', item => timeScale(item[0]))
+    //   .attr('y', item => padding + innerHeight - GDPScale(item[1]))
+    //   .attr('width', 50)
+    //   .attr('height', 50);
+  })
+  .catch(err => console.error(err));
