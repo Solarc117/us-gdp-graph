@@ -5,6 +5,7 @@
   "javascript.suggest.autoImports": true,
   "js/ts.implicitProjectConfig.checkJs": true,
   "debug.allowBreakpointsEverywhere": true,
+  "editor.guides.bracketPairs": true,
   "launch": {
     "version": "0.2.0",
     "configurations": [
