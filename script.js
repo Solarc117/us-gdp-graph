@@ -20,15 +20,18 @@ d3.json(
   'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json'
 )
   .then(data => {
+    const svg = d3.select('svg');
+
+    const dateGDPList = data.data;
+    log(data);
+
+
     const width = document.querySelector('.canvas').clientWidth,
       height = document.querySelector('.canvas').clientHeight,
       padding = 50,
       innerWidth = width - 2 * padding,
-      innerHeight = height - 2 * padding;
-
-    const svg = d3.select('svg');
-
-    const dateGDPList = data.data;
+      innerHeight = height - 2 * padding,
+      barWidth = innerWidth / dateGDPList.length;
 
     const timeScale = d3
         .scaleLinear()
@@ -41,23 +44,44 @@ d3.json(
         .scaleLinear()
         .domain([0, d3.max(dateGDPList, data => data[1])])
         .range([padding + innerHeight, padding]);
-      // GDPAxisScale = d3
-      //   .scaleLinear()
-      //   .domain([0, d3.max(dateGDPList, data => data[1])])
-      //   .range([padding, padding + innerHeight]);
 
-    // I'm going to try and render the AXES first, and THEN the rectangles.
+    /**
+     * Returns what the height of the bar should be based on its GDP.
+     * @param {number} GDP
+     * @returns Bar height in px.
+     */
+    function barHeight(GDP) {
+      const scale = d3
+        .scaleLinear()
+        .domain([0, d3.max(dateGDPList, data => data[1])])
+        .range([0, innerHeight]);
+      return scale(GDP);
+    }
 
+    // I found rendering the axes first, then the bars one part at a time (x, width, height, y) quite helpful.
 
+    // ***Axes***
+    const timeAxis = d3.axisBottom(timeScale),
+      GDPAxis = d3.axisLeft(GDPScale);
 
-    // svg
-    //   .selectAll('rect')
-    //   .data(dateGDPList)
-    //   .enter()
-    //   .append('rect')
-    //   .attr('x', item => timeScale(item[0]))
-    //   .attr('y', item => padding + innerHeight - GDPScale(item[1]))
-    //   .attr('width', 50)
-    //   .attr('height', 50);
+    svg
+      .append('g')
+      .attr('transform', `translate(0, ${padding + innerHeight})`)
+      .call(timeAxis);
+    svg
+      .append('g')
+      .attr('transform', `translate(${padding}, 0)`)
+      .call(GDPAxis);
+    // *Axes*
+    // ***Rectangles***
+    svg
+      .selectAll('rect')
+      .data(dateGDPList)
+      .enter()
+      .append('rect')
+      .attr('x', item => timeScale(timeToDecimal(item[0])))
+      .attr('y', item => padding + innerHeight - barHeight(item[1]))
+      .attr('width', barWidth)
+      .attr('height', item => barHeight(item[1]));
   })
-  .catch(err => console.error(err));
+  .catch(err => error(err));
