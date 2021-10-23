@@ -1,11 +1,4 @@
 'use strict';
-console.clear();
-function log() {
-  console.log('📄', ...arguments);
-}
-function error() {
-  console.error('❌', ...arguments);
-}
 // This line throws an error, but with it I get d3 working, so I'll ignore the error message.
 // @ts-ignore
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
@@ -20,15 +13,12 @@ d3.json(
   'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json'
 )
   .then(data => {
-    const svg = d3.select('svg');
-
-    const dateGDPList = data.data;
-    log(data);
-
+    const dateGDPList = data.data,
+      source = data.display_url;
 
     const width = document.querySelector('.canvas').clientWidth,
       height = document.querySelector('.canvas').clientHeight,
-      padding = 50,
+      padding = 75,
       innerWidth = width - 2 * padding,
       innerHeight = height - 2 * padding,
       barWidth = innerWidth / dateGDPList.length;
@@ -64,6 +54,8 @@ d3.json(
     const timeAxis = d3.axisBottom(timeScale),
       GDPAxis = d3.axisLeft(GDPScale);
 
+    const svg = d3.select('.canvas');
+
     svg
       .append('g')
       .attr('transform', `translate(0, ${padding + innerHeight})`)
@@ -83,5 +75,9 @@ d3.json(
       .attr('y', item => padding + innerHeight - barHeight(item[1]))
       .attr('width', barWidth)
       .attr('height', item => barHeight(item[1]));
+
+    const footer = (document.querySelector(
+      'footer'
+    ).innerHTML += `Source: <a target='_blank' href='${source}'>${source}</a>`);
   })
-  .catch(err => error(err));
+  .catch(err => console.error('❌', err));

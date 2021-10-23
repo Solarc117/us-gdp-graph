@@ -1,3 +1,14 @@
+:root {
+  --dark-background: hsl(0, 0%, 20%);
+  --light-background: hsl(0, 0%, 95%);
+
+  --light: hsl(33, 100%, 75%);
+  --light-hover: hsl(54, 77%, 90%);
+
+  --dark: hsl(182, 25%, 40%);
+  --dark-hover: hsl(240, 40%, 85%);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,31 +17,72 @@
 
 html,
 body {
-  font-family: sans-serif;
   width: 100%;
   height: 100%;
+}
+body {
+  font-family: sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+body.dark {
+  background: var(--dark-background);
+  color: var(--light);
+}
+body.dark a {
+  color: var(--dark);
+}
+body.light {
+  background: var(--light-background);
+  color: var(--dark);
+}
+body.light a {
+  color: var(--light);
+}
+
+.theme-button {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: inherit;
+  display: flex;
+  flex-direction: row;
+}
+.theme-button > svg {
+  width: 30px;
+  height: 20px;
+}
+.theme-button > .moon {
+  color: var(--dark);
+}
+.theme-button > .sun {
+  color: var(--light);
 }
 
 h1 {
   position: absolute;
   top: 10px;
-  font-weight: 100;
+  font-weight: 1;
 }
 
 .canvas {
-  width: 700px;
-  height: 500px;
-  border: 1px solid black;
+  width: 100%;
+  height: 100%;
 }
-
-rect {
-  fill: hsl(240, 90%, 55%);
+.canvas.light > rect {
+  fill: var(--light);
 }
-rect:hover {
-  fill: rgb(189, 192, 15);
+.canvas.light > rect:hover {
+  fill: var(--light-hover);
+}
+.canvas.dark > rect {
+  fill: var(--dark);
+}
+.canvas.dark > rect:hover {
+  fill: var(--dark-hover);
 }
 
 footer {
@@ -40,6 +92,5 @@ footer {
 
 footer > a {
   text-decoration: none;
-  color: black;
   cursor: pointer;
 }
