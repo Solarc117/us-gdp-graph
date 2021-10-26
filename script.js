@@ -75,11 +75,11 @@ function load() {
         .attr('height', item => barHeight(item[1]));
 
       // This whole section is to toggle the info on the left of the graph upon rect hover, and fade it out when the user mouses out.
-      document.querySelectorAll('rect').forEach((rect, i) => {
-        let clearTimer;
+      let clearTooltipTimer;
+      document.querySelectorAll('rect').forEach(rect => {
         const tooltip = document.querySelector('.tooltip');
         rect.addEventListener('mouseover', event => {
-          clearTimeout(clearTimer);
+          clearTimeout(clearTooltipTimer);
           const [year, month] = rect.__data__[0].split('-'),
             quarter =
               month === '01'
@@ -95,7 +95,7 @@ function load() {
         rect.addEventListener(
           'mouseout',
           () =>
-            (clearTimer = setTimeout(() => {
+            (clearTooltipTimer = setTimeout(() => {
               tooltip.animate(
                 [
                   {
