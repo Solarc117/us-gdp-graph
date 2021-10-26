@@ -41,6 +41,18 @@ body.light a {
   color: var(--light);
 }
 
+.axisTitle {
+  position: absolute;
+}
+.x {
+  left: 20px;
+  top: 20px;
+}
+.y {
+  right: 10px;
+  bottom: 40px;
+}
+
 .theme-button {
   cursor: pointer;
   position: absolute;
@@ -83,6 +95,10 @@ h1 {
 }
 .canvas.dark > rect:hover {
   fill: var(--dark-hover);
+}
+.tooltip {
+  position: absolute;
+  left: 80px;
 }
 
 footer {

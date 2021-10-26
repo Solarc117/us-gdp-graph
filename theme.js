@@ -1,12 +1,5 @@
 'use strict';
 
-function log() {
-  console.log('📄', ...arguments);
-}
-function error() {
-  console.error('❌', ...arguments);
-}
-
 let isDarkTheme = true;
 
 function toggleTheme() {
@@ -43,7 +36,7 @@ function toggleTheme() {
     isDarkTheme
       ? [lightStyles.body, darkStyles.body]
       : [darkStyles.body, lightStyles.body],
-    //@ts-ignore
+
     duration
   );
   rects.forEach(rect =>
@@ -51,7 +44,7 @@ function toggleTheme() {
       isDarkTheme
         ? [lightStyles.rects, darkStyles.rects]
         : [darkStyles.rects, lightStyles.rects],
-      //@ts-ignore
+
       duration
     )
   );
