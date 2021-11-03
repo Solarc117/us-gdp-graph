@@ -111,8 +111,8 @@ function load() {
 
       document.querySelector(
         'footer'
-      ).innerHTML = `<a href="https://github.com/Solarc117">Carlos Bernal</a>, project idea by
-      <a href="https://freecodecamp.org">fCC</a>. Source: <a target='_blank' href='${source}'>${source}</a>`;
+      ).innerHTML = `<a target='_blank' href="https://github.com/Solarc117">Carlos Bernal</a>, project idea by
+      <a target='_blank' href="https://freecodecamp.org">fCC</a>. Source: <a target='_blank' href='${source}'>${source}</a>`;
     })
     .catch(err => console.error('❌', err));
 }
