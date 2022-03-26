@@ -1,13 +1,16 @@
-'use strict';
+'use strict'
 
-let isDarkTheme = true;
+let isDarkTheme = true
 
 function toggleTheme() {
-  isDarkTheme = !isDarkTheme;
+  isDarkTheme = !isDarkTheme
+
   const body = document.body,
+    { classList: bodyClasses } = body,
     rects = document.querySelectorAll('rect'),
-    canvas = document.querySelector('.canvas'),
-    darkStyles = {
+    { classList: canvasClasses } = document.querySelector('.canvas')
+
+  const darkStyles = {
       body: {
         background: 'hsl(0, 0%, 20%)',
         color: 'hsl(33, 100%, 75%)',
@@ -25,12 +28,12 @@ function toggleTheme() {
         fill: 'hsl(33, 100%, 75%)',
       },
     },
-    duration = 500;
+    duration = 500
 
-  canvas.classList.toggle('light');
-  canvas.classList.toggle('dark');
-  body.classList.toggle('light');
-  body.classList.toggle('dark');
+  canvasClasses.toggle('light')
+  canvasClasses.toggle('dark')
+  bodyClasses.toggle('light')
+  bodyClasses.toggle('dark')
 
   body.animate(
     isDarkTheme
@@ -38,7 +41,7 @@ function toggleTheme() {
       : [darkStyles.body, lightStyles.body],
 
     duration
-  );
+  )
   rects.forEach(rect =>
     rect.animate(
       isDarkTheme
@@ -47,8 +50,8 @@ function toggleTheme() {
 
       duration
     )
-  );
+  )
 }
 
-const button = document.querySelector('.theme-button');
-button.addEventListener('click', toggleTheme);
+const button = document.querySelector('.theme-button')
+button.addEventListener('click', toggleTheme)
